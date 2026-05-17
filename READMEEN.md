@@ -1,16 +1,17 @@
 # IEEE LaTeX Writer Open
 
-A Codex Skill for robotics, reinforcement learning, control, and intelligent-systems papers targeting IEEE, RA-L, T-RO, T-AC, ICRA, IROS, RSS, CoRL, and related venues.
+A Codex Skill for research-paper writing across most IEEE fields, including IEEEtran journals, conferences, Letters, Magazine-style papers, and common IEEE-style submission workflows.
 
-It goes beyond IEEE LaTeX formatting: it helps improve research narrative, contribution coherence, double-blind anonymity, experimental rigor, BibTeX cleanup, reviewer responses, and pre-submission static auditing.
+It goes beyond LaTeX formatting: it helps improve research narrative, contribution coherence, double-blind anonymity, experimental rigor, BibTeX cleanup, reviewer responses, and pre-submission static auditing. Robotics, reinforcement learning, control, and intelligent systems are enhanced modules, not the only supported scope.
 
-Chinese version: [README.md](README.md).
+中文版本：[README.md](README.md)
 
 ## Features
 
 - IEEEtran paper drafting, revision, restructuring, and pre-submission checks
-- Research strategy and notation guidance for robotics, reinforcement learning, control, and intelligent systems
-- Venue-aware adaptation for RA-L, T-RO, T-AC, ICRA, IROS, RSS, CoRL, and related venues
+- Research narrative, contribution framing, experimental logic, and reviewer-aware writing across IEEE fields
+- Domain modules for robotics/RL/control, computer and intelligent systems, communications and signal processing, power and energy systems, and more
+- Venue-aware adaptation for IEEE Transactions, Letters, conferences, RA-L, T-RO, T-AC, ICRA, IROS, RSS, CoRL, and related venues
 - Double-blind anonymity checks for authors, affiliations, grants, self-citations, and lab-identifying details
 - Response Letter workflow that maps reviewer comments to concrete manuscript changes
 - BibTeX cleanup, including capitalization protection, noisy-field removal, and IEEE venue abbreviation
@@ -37,13 +38,13 @@ Replace `YOUR-USER` with the actual GitHub user or organization.
 Example prompt:
 
 ```text
-Use $ieee-latex-writer to strengthen the research narrative, experiments, and LaTeX of my IEEE robotics paper.
+Use $ieee-latex-writer to improve the research narrative, LaTeX structure, and submission readiness of my IEEE paper.
 ```
 
 Other examples:
 
 ```text
-Use $ieee-latex-writer to audit my RA-L paper for double-blind review.
+Use $ieee-latex-writer to audit my IEEE paper for double-blind review.
 ```
 
 ```text
@@ -70,6 +71,12 @@ The audit checks common risks such as IEEEtran class usage, risky packages, unre
 
 This script does not replace the official IEEE Template Selector, IEEE LaTeX Analyzer, Reference Preparation Assistant, PDF Checker, or target venue instructions.
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=YOUR-USER/ieee-latex-writer&type=Date)](https://www.star-history.com/#YOUR-USER/ieee-latex-writer&Date)
+
+> After publishing to GitHub, replace `YOUR-USER` with your GitHub user or organization.
+
 ## License
 
-MIT
+This project is licensed under the [MIT License](LICENSE).

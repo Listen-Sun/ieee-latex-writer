@@ -1,11 +1,11 @@
 ---
 name: ieee-latex-writer
-description: Open-community research-paper and IEEE LaTeX writing support for robotics, reinforcement learning, control, intelligent systems, IEEEtran journals, RA-L, T-RO, T-AC, RSS, CoRL, ICRA, IROS, and related venues. Use when Codex needs to draft, polish, anonymize, audit, or strategically reshape research manuscripts; improve scientific narrative, contribution coherence, reviewer awareness, experimental rigor, domain-specific notation, LaTeX structure, BibTeX references, reviewer responses, or static checks on .tex/.bib projects before submission.
+description: Open-community research-paper and IEEE LaTeX writing support for most IEEE fields, including IEEEtran journals, conferences, letters, magazines, robotics, reinforcement learning, control, intelligent systems, communications, signal processing, power, energy, and related venues. Use when Codex needs to draft, polish, anonymize, audit, or strategically reshape IEEE-style research manuscripts; improve scientific narrative, contribution coherence, reviewer awareness, experimental rigor, domain-specific notation, LaTeX structure, BibTeX references, reviewer responses, or static checks on .tex/.bib projects before submission.
 ---
 
 # IEEE LaTeX Writer Open
 
-Open-community skill for writing, revising, anonymizing, and auditing robotics, control, reinforcement learning, intelligent systems, and IEEE-style LaTeX manuscripts. Treat paper strategy and scientific argument quality as first-class tasks, then apply venue style, LaTeX mechanics, and static checks.
+Open-community skill for writing, revising, anonymizing, and auditing IEEE-style LaTeX manuscripts across most engineering and computing fields. Treat paper strategy and scientific argument quality as first-class tasks, then apply venue style, domain conventions, LaTeX mechanics, and static checks.
 
 ## Core Workflow
 

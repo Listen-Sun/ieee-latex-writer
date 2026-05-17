@@ -1,16 +1,17 @@
 # IEEE LaTeX Writer Open
 
-面向 IEEE、RA-L、T-RO、T-AC、ICRA、IROS、RSS、CoRL 等机器人、强化学习、控制与智能系统论文的 Codex Skill。
+面向 IEEE 多数学科论文写作的 Codex Skill，适用于 IEEEtran 期刊、会议、Letters、Magazine 以及常见 IEEE 风格投稿场景。
 
-它不仅处理 IEEE LaTeX 格式，还帮助完善研究叙事、贡献逻辑、双盲匿名、实验严谨性、BibTeX 清洗、审稿回复和投稿前静态审计。
+它不仅处理 LaTeX 格式，还帮助完善研究叙事、贡献逻辑、双盲匿名、实验严谨性、BibTeX 清洗、审稿回复和投稿前静态审计。机器人、强化学习、控制与智能系统是其中的增强模块，而不是唯一适用范围。
 
-英文版见 [READMEEN.md](READMEEN.md)。
+English version: [READMEEN.md](READMEEN.md)
 
 ## 功能
 
 - IEEEtran 论文写作、润色、重构与投稿前检查
-- 机器人、强化学习、控制、智能系统等领域的论文策略与符号规范
-- RA-L/T-RO/T-AC/ICRA/IROS/RSS/CoRL 等 venue-aware 写作适配
+- 面向 IEEE 多领域的研究叙事、贡献组织、实验逻辑和 reviewer-aware 写作
+- 领域模块：机器人/强化学习/控制、计算机与智能系统、通信与信号处理、电力与能源系统等
+- Venue-aware 写作适配，包括 IEEE Transactions、Letters、Conference、RA-L/T-RO/T-AC/ICRA/IROS/RSS/CoRL 等
 - 双盲评审匿名化检查，包括作者、机构、资助号、自引和实验室特征泄露
 - Response Letter 工作流，支持审稿意见逐条映射到修改稿
 - BibTeX 文献库清洗，包括专有名词大小写保护、冗余字段清理和 IEEE 期刊缩写
@@ -37,13 +38,13 @@ npx skills add https://github.com/YOUR-USER/ieee-latex-writer --agent codex --ye
 示例提示：
 
 ```text
-Use $ieee-latex-writer to strengthen the research narrative, experiments, and LaTeX of my IEEE robotics paper.
+Use $ieee-latex-writer to improve the research narrative, LaTeX structure, and submission readiness of my IEEE paper.
 ```
 
 也可以用于：
 
 ```text
-Use $ieee-latex-writer to audit my RA-L paper for double-blind review.
+Use $ieee-latex-writer to audit my IEEE paper for double-blind review.
 ```
 
 ```text
@@ -70,6 +71,12 @@ python scripts/audit_ieee_latex.py path/to/main.tex
 
 该脚本不能替代官方 IEEE Template Selector、IEEE LaTeX Analyzer、Reference Preparation Assistant、PDF Checker 或目标 venue 的投稿说明。
 
-## 许可
+## Star History
 
-MIT
+[![Star History Chart](https://api.star-history.com/svg?repos=YOUR-USER/ieee-latex-writer&type=Date)](https://www.star-history.com/#YOUR-USER/ieee-latex-writer&Date)
+
+> 发布到 GitHub 后，将 `YOUR-USER` 替换为你的 GitHub 用户名或组织名。
+
+## License
+
+本项目采用 [MIT License](LICENSE)。
