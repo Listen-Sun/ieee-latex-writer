@@ -26,7 +26,7 @@ Open-community skill for writing, revising, anonymizing, and auditing IEEE-style
 - Read `references/ieee-style-guide.md` for IEEE writing, citation, figure, table, equation, anonymity, BibTeX, and domain-notation guidance.
 - Read `references/latex-project-workflow.md` when creating or repairing a LaTeX project, choosing compile commands, preparing an archive, or explaining the static audit spectrum.
 - Read `references/revision-and-review.md` when revising a draft, building a response letter, mapping reviewer comments to manuscript changes, or marking changed text.
-- Use `assets/minimal-ieee-paper.tex` only as a lightweight starter skeleton. For real submissions, direct users to the official IEEE Template Selector or target venue package.
+- Use `assets/ieee-official-templates/` as the bundled IEEEtran starter package when a local template is needed. Prefer the target venue's current template package or IEEE Template Selector for real submissions, then fall back to the bundled official journal sample.
 - Run `scripts/audit_ieee_latex.py <project-or-main.tex>` for lightweight static checks. Treat it as a preflight aid, not a replacement for compilation or official IEEE validation tools.
 
 ## Paper Strategy Layer
@@ -219,7 +219,8 @@ Always separate observation, latent representation, adaptation, policy head, rew
 
 ## LaTeX Rules
 
-- Start from `\documentclass[conference]{IEEEtran}` for conferences and `\documentclass[journal]{IEEEtran}` or the venue-provided class for journals unless the official template says otherwise.
+- Start from the current target-venue package when provided. If no venue package is available, use `assets/ieee-official-templates/bare_jrnl_new_sample4.tex` plus `IEEEtran.cls` for journal manuscripts, or convert the official IEEEtran class options carefully for conference work according to IEEE/venue instructions.
+- Keep official template files under `assets/ieee-official-templates/` intact. When creating a user project, copy the needed `.tex`, `IEEEtran.cls`, bibliography/style resources if present, and sample figures into the user's project before editing.
 - Use BibTeX with `\bibliographystyle{IEEEtran}` unless the venue explicitly requires another workflow.
 - Keep figures, tables, equations, algorithms, and references in normal IEEE floating environments. Avoid manual placement hacks, margin changes, and font-size compression.
 - Use nonbreaking spaces before citations, references, and units: `Fig.~\ref{fig:overview}`, `Table~\ref{tab:results}`, `Section~\ref{sec:method}`, `Algorithm~\ref{alg:main}`, `\cite{key}` when preceded by prose, `10~m`, and `3~V`.

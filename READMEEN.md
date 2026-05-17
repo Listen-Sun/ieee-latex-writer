@@ -25,7 +25,27 @@ Clone this repository into your Codex skills directory:
 git clone https://github.com/Listen-Sun/ieee-latex-writer.git ~/.codex/skills/ieee-latex-writer
 ```
 
+For a workspace-local install, keep the editable source anywhere convenient and mirror or copy the `ieee-latex-writer` folder into:
+
+```text
+<workspace>/.agents/skills/ieee-latex-writer
+```
+
 Or install with an Agent Skills compatible CLI:
+
+```bash
+npx skills add https://github.com/Listen-Sun/ieee-latex-writer --agent codex --yes
+```
+
+## Update
+
+If the repository is installed directly in the Codex skills directory, run:
+
+```bash
+git -C ~/.codex/skills/ieee-latex-writer pull
+```
+
+If it was installed through an Agent Skills compatible CLI, rerun the install command to refresh it:
 
 ```bash
 npx skills add https://github.com/Listen-Sun/ieee-latex-writer --agent codex --yes
@@ -54,8 +74,9 @@ Use $ieee-latex-writer to clean my BibTeX file and check IEEE formatting risks.
 - `SKILL.md`: Core skill instructions and trigger description
 - `agents/openai.yaml`: Skill UI metadata
 - `references/`: IEEE writing, LaTeX workflow, and reviewer-response references
-- `assets/minimal-ieee-paper.tex`: Lightweight IEEEtran starter template
+- `assets/ieee-official-templates/`: Bundled official IEEEtran template files and instructions
 - `scripts/audit_ieee_latex.py`: Static audit script for IEEE LaTeX projects
+- `.codex-plugin/plugin.json`: Optional package metadata for plugin-style skill distribution
 
 ## Static Audit
 
