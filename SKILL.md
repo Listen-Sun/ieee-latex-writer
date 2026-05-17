@@ -60,6 +60,7 @@ Use this as the main reasoning layer for paper quality:
 Adapt emphasis to the target venue:
 
 - `T-RO` and `RA-L`: balance technical clarity, embodied validation, hardware realism, failure cases, and reproducibility. Prefer concise claims with strong experiments.
+- For RA-L with ICRA/IROS joint submission, maintain two page-budget modes: a compact conference-facing version and the RA-L journal version. Shift detail between main text, references, appendices/supplementary material, and biographies according to the active template; hide biographies during review when required and restore them only for accepted journal/camera-ready files. Adjust reference compactness only through venue-approved bibliography/template settings, never by manual font or spacing hacks.
 - `T-AC` and control-theory venues: prioritize formal problem statements, assumptions, theorem/proof structure, stability or convergence guarantees, and precise notation.
 - `ICRA` and `IROS`: emphasize a clear robotics problem, system contribution, implementation detail, comparisons, and real or credible simulated deployment.
 - `RSS`: favor insight-driven robotics papers with clean problem framing, convincing analysis, strong experiments, and restrained writing.
@@ -236,16 +237,17 @@ Apply this protocol whenever creating, editing, or auditing `.bib` files:
 
 1. Preserve citation keys unless the user asks to rename them; update all `\cite{...}` commands if a key must change.
 2. Protect proper nouns, algorithm names, standards, software names, and acronyms with braces, preferably double braces for fragile terms: `{{Kalman}} filter`, `{{IEEE}}`, `{{LiDAR}}`, `{{ROS}}`, `{{SLAM}}`, `{{MIMO}}`, and `{{OFDM}}`.
-3. Remove fields that usually pollute IEEEtran output or leak irrelevant metadata: `publisher`, `issn`, `isbn`, `url`, `doi`, `arxivId`, `archivePrefix`, `eprint`, `abstract`, `keywords`, `language`, `month`, and `note`, unless the venue explicitly requires them.
+3. Remove fields that usually pollute IEEEtran output or leak irrelevant metadata: `publisher`, `issn`, `isbn`, `url`, `doi`, `arxivId`, `archivePrefix`, `eprint`, `abstract`, `keywords`, `language`, `month`, and `note`, unless the venue explicitly requires them. For Early Access articles or preprints without assigned volume/pages, preserve `doi` or `arxivId` so the work remains legally and technically traceable.
 4. Keep the minimal clean field set by entry type: authors, title, journal or booktitle, volume/number/pages or article number when available, and year.
 5. Normalize IEEE venue names to official abbreviations. Examples: `IEEE Transactions on Robotics` -> `IEEE Trans. Robot.`, `IEEE Transactions on Automatic Control` -> `IEEE Trans. Automat. Control`, `IEEE Transactions on Signal Processing` -> `IEEE Trans. Signal Process.`, `IEEE Transactions on Wireless Communications` -> `IEEE Trans. Wireless Commun.`, and `IEEE Transactions on Power Systems` -> `IEEE Trans. Power Syst.`.
 6. Check capitalization after cleanup by compiling or inspecting the generated `.bbl` when possible.
 
 ## Static Audit Engine
 
-When source files are available, run `scripts/audit_ieee_latex.py <project-or-main.tex>`. When execution is unavailable, perform the same audit mentally and report findings by severity. The audit should intercept:
+When source files are available, first verify source-file encoding before analysis, rewriting, or repair. Prefer standard UTF-8; if a legacy encoding such as GBK is detected or suspected, warn the user and avoid blind rewrites that could corrupt local source files. Then run `scripts/audit_ieee_latex.py <project-or-main.tex>`. When execution is unavailable, perform the same audit mentally and report findings by severity. The audit should intercept:
 
 - IEEE structure risks: missing IEEEtran class, suspicious class options, missing abstract/keywords, missing IEEEtran bibliography style, unresolved citations, unmatched labels, missing graphics, discouraged graphics extensions, and float caption/label order errors.
+- Source file encoding compliance: non-UTF-8 files, mixed encodings, BOM-related surprises, or decode fallbacks that could change characters during automated fixes.
 - Double-blind risks: author names, affiliations, email addresses, acknowledgments, grant numbers, ORCID IDs, institutional repositories, self-identifying URLs, lab-specific equipment/software names, and first-person self-citations such as "our previous work [1]".
 - Text encoding and punctuation risks: Chinese characters, Chinese commas/periods/parentheses, full-width punctuation, or multibyte source-region punctuation left in text or comments.
 - Unit and numeric formatting risks: unescaped percentages such as `10%` instead of `10\%`, glued units such as `10m`, `3V`, or `180C`, and temperature formatting that should appear as `180$^\circ$C` or a venue-approved equivalent.
