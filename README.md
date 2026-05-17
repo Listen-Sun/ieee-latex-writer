@@ -22,16 +22,14 @@ English version: [READMEEN.md](READMEEN.md)
 将仓库克隆到 Codex skills 目录：
 
 ```bash
-git clone https://github.com/YOUR-USER/ieee-latex-writer.git ~/.codex/skills/ieee-latex-writer
+git clone https://github.com/Listen-Sun/ieee-latex-writer.git ~/.codex/skills/ieee-latex-writer
 ```
 
 或使用支持 Agent Skills 的 CLI 安装：
 
 ```bash
-npx skills add https://github.com/YOUR-USER/ieee-latex-writer --agent codex --yes
+npx skills add https://github.com/Listen-Sun/ieee-latex-writer --agent codex --yes
 ```
-
-将 `YOUR-USER` 替换为实际 GitHub 用户名或组织名。
 
 ## 使用
 
@@ -73,9 +71,7 @@ python scripts/audit_ieee_latex.py path/to/main.tex
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=YOUR-USER/ieee-latex-writer&type=Date)](https://www.star-history.com/#YOUR-USER/ieee-latex-writer&Date)
-
-> 发布到 GitHub 后，将 `YOUR-USER` 替换为你的 GitHub 用户名或组织名。
+[![Star History Chart](https://api.star-history.com/svg?repos=Listen-Sun/ieee-latex-writer&type=Date)](https://www.star-history.com/#Listen-Sun/ieee-latex-writer&Date)
 
 ## License
 

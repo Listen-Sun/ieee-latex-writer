@@ -22,16 +22,14 @@ It goes beyond LaTeX formatting: it helps improve research narrative, contributi
 Clone this repository into your Codex skills directory:
 
 ```bash
-git clone https://github.com/YOUR-USER/ieee-latex-writer.git ~/.codex/skills/ieee-latex-writer
+git clone https://github.com/Listen-Sun/ieee-latex-writer.git ~/.codex/skills/ieee-latex-writer
 ```
 
 Or install with an Agent Skills compatible CLI:
 
 ```bash
-npx skills add https://github.com/YOUR-USER/ieee-latex-writer --agent codex --yes
+npx skills add https://github.com/Listen-Sun/ieee-latex-writer --agent codex --yes
 ```
-
-Replace `YOUR-USER` with the actual GitHub user or organization.
 
 ## Usage
 
@@ -73,9 +71,7 @@ This script does not replace the official IEEE Template Selector, IEEE LaTeX Ana
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=YOUR-USER/ieee-latex-writer&type=Date)](https://www.star-history.com/#YOUR-USER/ieee-latex-writer&Date)
-
-> After publishing to GitHub, replace `YOUR-USER` with your GitHub user or organization.
+[![Star History Chart](https://api.star-history.com/svg?repos=Listen-Sun/ieee-latex-writer&type=Date)](https://www.star-history.com/#Listen-Sun/ieee-latex-writer&Date)
 
 ## License
 
