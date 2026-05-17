@@ -1,0 +1,4 @@
+interface:
+  display_name: "IEEE LaTeX Writer"
+  short_description: "Draft, revise, and audit IEEE LaTeX papers."
+  default_prompt: "Use $ieee-latex-writer to draft, revise, or audit an IEEE-style LaTeX paper."

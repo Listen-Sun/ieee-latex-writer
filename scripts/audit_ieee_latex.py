@@ -1,0 +1,213 @@
+#!/usr/bin/env python3
+"""Static checks for common IEEE LaTeX manuscript issues."""
+
+from __future__ import annotations
+
+import argparse
+import re
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+
+
+RISKY_PACKAGES = {
+    "geometry": "IEEE submissions should normally not alter page geometry.",
+    "fullpage": "IEEE submissions should normally not alter margins.",
+    "titlesec": "Section title formatting is controlled by IEEEtran.",
+    "caption": "caption can conflict with IEEEtran caption formatting.",
+    "subcaption": "subcaption can conflict with IEEEtran; check venue compatibility.",
+    "setspace": "Line spacing changes are usually not allowed in final IEEE format.",
+}
+
+ACCEPTED_GRAPHICS = {".ps", ".eps", ".pdf", ".png", ".tif", ".tiff"}
+DISCOURAGED_GRAPHICS = {".jpg", ".jpeg", ".gif", ".bmp", ".svg"}
+
+
+@dataclass
+class Finding:
+    level: str
+    path: Path
+    line: int
+    message: str
+
+    def render(self, root: Path) -> str:
+        try:
+            rel = self.path.relative_to(root)
+        except ValueError:
+            rel = self.path
+        loc = f"{rel}:{self.line}" if self.line else str(rel)
+        return f"[{self.level}] {loc} - {self.message}"
+
+
+def strip_comments(text: str) -> str:
+    lines = []
+    for line in text.splitlines():
+        escaped = False
+        out = []
+        for ch in line:
+            if ch == "%" and not escaped:
+                break
+            out.append(ch)
+            escaped = ch == "\\" and not escaped
+            if ch != "\\":
+                escaped = False
+        lines.append("".join(out))
+    return "\n".join(lines)
+
+
+def line_for(text: str, index: int) -> int:
+    return text.count("\n", 0, index) + 1
+
+
+def read(path: Path) -> str:
+    for encoding in ("utf-8", "utf-8-sig", "latin-1"):
+        try:
+            return path.read_text(encoding=encoding)
+        except UnicodeDecodeError:
+            continue
+    return path.read_text(errors="replace")
+
+
+def find_main_tex(target: Path) -> Path:
+    if target.is_file():
+        return target
+    candidates = []
+    for tex in target.rglob("*.tex"):
+        try:
+            if "\\documentclass" in read(tex):
+                candidates.append(tex)
+        except OSError:
+            pass
+    if not candidates:
+        raise SystemExit(f"No main .tex file with \\documentclass found under {target}")
+    candidates.sort(key=lambda p: (len(p.parts), str(p)))
+    return candidates[0]
+
+
+def parse_braced_list(command: str, text: str) -> list[tuple[str, int]]:
+    pattern = re.compile(r"\\" + re.escape(command) + r"(?:\[[^\]]*\])?\{([^}]*)\}")
+    return [(match.group(1), match.start()) for match in pattern.finditer(text)]
+
+
+def split_csv(value: str) -> list[str]:
+    return [part.strip() for part in value.split(",") if part.strip()]
+
+
+def collect_bib_keys(project_root: Path, bib_names: list[str]) -> set[str]:
+    keys: set[str] = set()
+    for name in bib_names:
+        bib = (project_root / name).with_suffix(".bib")
+        if not bib.exists():
+            continue
+        text = read(bib)
+        keys.update(re.findall(r"@\w+\s*\{\s*([^,\s]+)", text))
+    return keys
+
+
+def check_main(main: Path) -> list[Finding]:
+    root = main.parent
+    raw = read(main)
+    text = strip_comments(raw)
+    findings: list[Finding] = []
+
+    doc = re.search(r"\\documentclass(?:\[([^\]]*)\])?\{([^}]*)\}", text)
+    if not doc:
+        findings.append(Finding("ERROR", main, 1, "Missing \\documentclass."))
+    else:
+        options = set(split_csv(doc.group(1) or ""))
+        cls = doc.group(2)
+        if "IEEEtran" not in cls:
+            findings.append(Finding("ERROR", main, line_for(text, doc.start()), "Document class is not IEEEtran or an IEEEtran-derived class."))
+        if not ({"conference", "journal", "technote", "peerreview", "peerreviewca", "compsoc", "letters", "transmag"} & options):
+            findings.append(Finding("WARN", main, line_for(text, doc.start()), "No common IEEEtran mode option found; verify the venue-required class options."))
+
+    if not re.search(r"\\begin\{abstract\}.*?\\end\{abstract\}", text, re.S):
+        findings.append(Finding("WARN", main, 1, "Missing abstract environment."))
+    if "\\begin{IEEEkeywords}" not in text and "\\begin{keywords}" not in text:
+        findings.append(Finding("WARN", main, 1, "Missing IEEEkeywords/keywords environment."))
+
+    for pkg_match in re.finditer(r"\\usepackage(?:\[[^\]]*\])?\{([^}]*)\}", text):
+        for package in split_csv(pkg_match.group(1)):
+            if package in RISKY_PACKAGES:
+                findings.append(Finding("WARN", main, line_for(text, pkg_match.start()), f"Risky package '{package}': {RISKY_PACKAGES[package]}"))
+
+    if re.search(r"\\(?:setlength|addtolength)\s*\{\\(?:textwidth|textheight|oddsidemargin|evensidemargin|topmargin)", text):
+        findings.append(Finding("WARN", main, 1, "Manual margin or text block changes detected."))
+    if re.search(r"\\vspace\s*\{\s*-\s*", text):
+        findings.append(Finding("WARN", main, 1, "Negative \\vspace detected; repeated spacing compression is risky for IEEE submission."))
+
+    bibstyles = [value for value, _ in parse_braced_list("bibliographystyle", text)]
+    bibs = [item for value, _ in parse_braced_list("bibliography", text) for item in split_csv(value)]
+    cites = [key for value, _ in parse_braced_list("cite", text) for key in split_csv(value)]
+    if cites and not bibs and "\\begin{thebibliography}" not in text:
+        findings.append(Finding("WARN", main, 1, "Citations found but no bibliography command or thebibliography environment detected."))
+    if bibs and not any("IEEEtran" in style for style in bibstyles):
+        findings.append(Finding("WARN", main, 1, "BibTeX bibliography is used without \\bibliographystyle{IEEEtran}."))
+
+    bib_keys = collect_bib_keys(root, bibs)
+    for key in sorted(set(cites)):
+        if bib_keys and key not in bib_keys:
+            findings.append(Finding("ERROR", main, 1, f"Citation key '{key}' not found in declared .bib files."))
+
+    labels = {value for value, _ in parse_braced_list("label", text)}
+    refs = {key for command in ("ref", "eqref", "autoref", "cref", "Cref") for value, _ in parse_braced_list(command, text) for key in split_csv(value)}
+    for key in sorted(refs - labels):
+        findings.append(Finding("ERROR", main, 1, f"Reference key '{key}' has no matching \\label."))
+
+    for inc, idx in parse_braced_list("includegraphics", text):
+        image = inc.strip()
+        candidates = [root / image]
+        if not Path(image).suffix:
+            candidates.extend(root / f"{image}{ext}" for ext in ACCEPTED_GRAPHICS | DISCOURAGED_GRAPHICS)
+        if not any(path.exists() for path in candidates):
+            findings.append(Finding("ERROR", main, line_for(text, idx), f"Included graphic '{image}' was not found."))
+        suffix = Path(image).suffix.lower()
+        if suffix in DISCOURAGED_GRAPHICS:
+            findings.append(Finding("WARN", main, line_for(text, idx), f"Graphic extension '{suffix}' is discouraged for IEEE submission."))
+        elif suffix and suffix not in ACCEPTED_GRAPHICS:
+            findings.append(Finding("WARN", main, line_for(text, idx), f"Graphic extension '{suffix}' is not in IEEE's common accepted graphics list."))
+
+    float_pattern = re.compile(r"\\begin\{(figure\*?|table\*?)\}(.*?)\\end\{\1\}", re.S)
+    for match in float_pattern.finditer(text):
+        env, body = match.group(1), match.group(2)
+        body_start_line = line_for(text, match.start())
+        cap = body.find("\\caption")
+        lab = body.find("\\label")
+        if cap < 0:
+            findings.append(Finding("WARN", main, body_start_line, f"{env} has no caption."))
+        if lab < 0:
+            findings.append(Finding("WARN", main, body_start_line, f"{env} has no label."))
+        if cap >= 0 and lab >= 0 and lab < cap:
+            findings.append(Finding("WARN", main, body_start_line, f"{env} label appears before caption; place labels after captions."))
+        if env.startswith("table") and cap > body.find("\\begin{tabular}") >= 0:
+            findings.append(Finding("WARN", main, body_start_line, "Table caption appears after tabular; IEEE style normally puts table captions above tables."))
+
+    return findings
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="Audit an IEEE LaTeX project for common static issues.")
+    parser.add_argument("target", help="Path to a main .tex file or a project directory.")
+    args = parser.parse_args()
+
+    target = Path(args.target).resolve()
+    main_tex = find_main_tex(target)
+    findings = check_main(main_tex)
+    root = main_tex.parent
+
+    print(f"Main file: {main_tex}")
+    if not findings:
+        print("No common IEEE LaTeX issues found by static audit.")
+        return 0
+
+    for finding in findings:
+        print(finding.render(root))
+
+    errors = sum(1 for finding in findings if finding.level == "ERROR")
+    warnings = sum(1 for finding in findings if finding.level == "WARN")
+    print(f"Summary: {errors} error(s), {warnings} warning(s).")
+    return 1 if errors else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
