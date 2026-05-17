@@ -21,6 +21,39 @@ RISKY_PACKAGES = {
 
 ACCEPTED_GRAPHICS = {".ps", ".eps", ".pdf", ".png", ".tif", ".tiff"}
 DISCOURAGED_GRAPHICS = {".jpg", ".jpeg", ".gif", ".bmp", ".svg"}
+CHINESE_CHAR_RE = re.compile(r"[\u4e00-\u9fff]")
+CHINESE_PUNCT_RE = re.compile(r"[\u3000-\u303f\uff00-\uffef]")
+UNESCAPED_PERCENT_RE = re.compile(r"(?<!\\)\b\d+(?:\.\d+)?%")
+MISSING_UNIT_SPACE_RE = re.compile(
+    r"(?<![A-Za-z\\])\b\d+(?:\.\d+)?(?:m|cm|mm|km|s|ms|V|A|W|Hz|N|Pa|rad|deg|K|kg|C)\b"
+)
+SELF_CITATION_RE = re.compile(
+    r"\b(?:in|from|based on|extends?|following)\s+our\s+(?:previous|prior|earlier)?\s*work\s*(?:~?\\cite|\[)",
+    re.I,
+)
+GRANT_RE = re.compile(r"\b(?:grant|award|contract|project)\s*(?:nos?\.?|numbers?|#)?\s*[:#]?\s*[A-Z]{0,6}\d{2,}", re.I)
+AFFILIATION_RE = re.compile(r"\b(?:university|institute|laboratory|lab|department|school|college|academy)\b", re.I)
+URL_RE = re.compile(r"https?://|github\.com|gitlab\.com|bitbucket\.org", re.I)
+DIRTY_BIB_FIELDS = {
+    "publisher",
+    "issn",
+    "isbn",
+    "url",
+    "arxivId",
+    "archivePrefix",
+    "eprint",
+    "abstract",
+    "keywords",
+    "language",
+}
+CAPITALIZATION_TERMS = ("Kalman", "IEEE", "LiDAR", "ROS", "SLAM", "GNSS", "UAV")
+IEEE_JOURNAL_ABBREVIATIONS = {
+    "IEEE Transactions on Robotics": "IEEE Trans. Robot.",
+    "IEEE Transactions on Automatic Control": "IEEE Trans. Automat. Control",
+    "IEEE Transactions on Control Systems Technology": "IEEE Trans. Control Syst. Technol.",
+    "IEEE Robotics and Automation Letters": "IEEE Robot. Autom. Lett.",
+    "IEEE Transactions on Intelligent Transportation Systems": "IEEE Trans. Intell. Transp. Syst.",
+}
 
 
 @dataclass
@@ -104,6 +137,78 @@ def collect_bib_keys(project_root: Path, bib_names: list[str]) -> set[str]:
     return keys
 
 
+def bib_paths(project_root: Path, bib_names: list[str]) -> list[Path]:
+    paths = []
+    for name in bib_names:
+        bib = (project_root / name).with_suffix(".bib")
+        if bib.exists():
+            paths.append(bib)
+    return paths
+
+
+def first_match_line(text: str, pattern: re.Pattern[str]) -> int:
+    match = pattern.search(text)
+    return line_for(text, match.start()) if match else 1
+
+
+def remove_text_commands(math_text: str) -> str:
+    return re.sub(r"\\text(?:rm|it|bf)?\s*\{[^{}]*\}", "", math_text)
+
+
+def check_math_hygiene(path: Path, text: str) -> list[Finding]:
+    findings: list[Finding] = []
+    math_envs = (
+        "equation",
+        "equation*",
+        "align",
+        "align*",
+        "IEEEeqnarray",
+        "multline",
+        "multline*",
+        "gather",
+        "gather*",
+    )
+    env_pattern = re.compile(
+        r"\\begin\{(" + "|".join(re.escape(env) for env in math_envs) + r")\}(.*?)\\end\{\1\}",
+        re.S,
+    )
+    narrative_re = re.compile(r"\b(?:where|when|if|then|therefore|subject|such|with|and|or)\b", re.I)
+    for match in env_pattern.finditer(text):
+        body = remove_text_commands(match.group(2))
+        if CHINESE_CHAR_RE.search(body):
+            findings.append(Finding("WARN", path, line_for(text, match.start()), "Chinese characters found inside a math environment; use English notation or wrap explanatory text in \\text{...}."))
+        if narrative_re.search(body):
+            findings.append(Finding("WARN", path, line_for(text, match.start()), "Narrative words found inside a math environment; wrap explanatory text in \\text{...}."))
+    return findings
+
+
+def check_bib_files(paths: list[Path]) -> list[Finding]:
+    findings: list[Finding] = []
+    field_pattern = re.compile(r"^\s*([A-Za-z][A-Za-z0-9_-]*)\s*=", re.M)
+    title_pattern = re.compile(r"\btitle\s*=\s*[{'\"](.+?)[}'\"],?\s*$", re.I | re.M)
+    journal_pattern = re.compile(r"\bjournal\s*=\s*[{'\"](.+?)[}'\"],?\s*$", re.I | re.M)
+
+    for bib in paths:
+        text = read(bib)
+        for match in field_pattern.finditer(text):
+            field = match.group(1)
+            if field in DIRTY_BIB_FIELDS:
+                findings.append(Finding("WARN", bib, line_for(text, match.start()), f"Dirty BibTeX field '{field}' should usually be removed for clean IEEEtran output."))
+
+        for match in title_pattern.finditer(text):
+            title = match.group(1)
+            for term in CAPITALIZATION_TERMS:
+                if re.search(rf"\b{re.escape(term)}\b", title) and f"{{{{{term}}}}}" not in title:
+                    findings.append(Finding("WARN", bib, line_for(text, match.start()), f"Protect '{term}' capitalization in the title with double braces."))
+
+        for match in journal_pattern.finditer(text):
+            journal = match.group(1).strip()
+            if journal in IEEE_JOURNAL_ABBREVIATIONS:
+                findings.append(Finding("WARN", bib, line_for(text, match.start()), f"Use IEEE abbreviation '{IEEE_JOURNAL_ABBREVIATIONS[journal]}' for journal name."))
+
+    return findings
+
+
 def check_main(main: Path) -> list[Finding]:
     root = main.parent
     raw = read(main)
@@ -125,6 +230,30 @@ def check_main(main: Path) -> list[Finding]:
         findings.append(Finding("WARN", main, 1, "Missing abstract environment."))
     if "\\begin{IEEEkeywords}" not in text and "\\begin{keywords}" not in text:
         findings.append(Finding("WARN", main, 1, "Missing IEEEkeywords/keywords environment."))
+
+    if CHINESE_CHAR_RE.search(text):
+        findings.append(Finding("WARN", main, first_match_line(text, CHINESE_CHAR_RE), "Chinese characters found in manuscript body; IEEE submissions normally require English text."))
+    if CHINESE_PUNCT_RE.search(text):
+        findings.append(Finding("WARN", main, first_match_line(text, CHINESE_PUNCT_RE), "Chinese or full-width punctuation found; replace with ASCII punctuation for IEEE LaTeX."))
+    for match in UNESCAPED_PERCENT_RE.finditer(raw):
+        findings.append(Finding("WARN", main, line_for(raw, match.start()), "Unescaped percent detected in numeric text; write percentages as 10\\%."))
+    for match in MISSING_UNIT_SPACE_RE.finditer(text):
+        token = match.group(0)
+        if token.endswith("C") and "$^\\circ$" in text[max(0, match.start() - 15):match.start()]:
+            continue
+        findings.append(Finding("WARN", main, line_for(text, match.start()), f"Possible missing space before unit in '{token}'; prefer forms like '10 m' or '3 V'."))
+
+    author_match = re.search(r"\\author\s*\{(.*?)\}\s*\\maketitle", text, re.S)
+    if author_match and ("@" in author_match.group(1) or AFFILIATION_RE.search(author_match.group(1))):
+        findings.append(Finding("WARN", main, line_for(text, author_match.start()), "Identity-bearing author metadata detected; anonymize for double-blind venues."))
+    if re.search(r"\\(?:section\*?|subsection\*?)\{Acknowledg(?:e)?ments?\}|\\begin\{acknowledg(?:e)?ments?\}", text, re.I):
+        findings.append(Finding("WARN", main, 1, "Acknowledgment section detected; remove or defer it for double-blind review if required."))
+    if GRANT_RE.search(text):
+        findings.append(Finding("WARN", main, first_match_line(text, GRANT_RE), "Grant or award number detected; anonymize or remove for double-blind review if required."))
+    if SELF_CITATION_RE.search(text):
+        findings.append(Finding("WARN", main, first_match_line(text, SELF_CITATION_RE), "First-person self-citation detected; rewrite in third person for double-blind review."))
+    if URL_RE.search(text):
+        findings.append(Finding("WARN", main, first_match_line(text, URL_RE), "Repository or URL detected; verify it does not reveal author identity during double-blind review."))
 
     for pkg_match in re.finditer(r"\\usepackage(?:\[[^\]]*\])?\{([^}]*)\}", text):
         for package in split_csv(pkg_match.group(1)):
@@ -148,6 +277,8 @@ def check_main(main: Path) -> list[Finding]:
     for key in sorted(set(cites)):
         if bib_keys and key not in bib_keys:
             findings.append(Finding("ERROR", main, 1, f"Citation key '{key}' not found in declared .bib files."))
+
+    findings.extend(check_bib_files(bib_paths(root, bibs)))
 
     labels = {value for value, _ in parse_braced_list("label", text)}
     refs = {key for command in ("ref", "eqref", "autoref", "cref", "Cref") for value, _ in parse_braced_list(command, text) for key in split_csv(value)}
@@ -181,6 +312,8 @@ def check_main(main: Path) -> list[Finding]:
             findings.append(Finding("WARN", main, body_start_line, f"{env} label appears before caption; place labels after captions."))
         if env.startswith("table") and cap > body.find("\\begin{tabular}") >= 0:
             findings.append(Finding("WARN", main, body_start_line, "Table caption appears after tabular; IEEE style normally puts table captions above tables."))
+
+    findings.extend(check_math_hygiene(main, text))
 
     return findings
 

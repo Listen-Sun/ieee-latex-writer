@@ -63,13 +63,17 @@ For each reviewer comment:
 3. Quote or summarize the changed manuscript location.
 4. Provide evidence when disagreeing.
 5. Keep tone factual and calm.
+6. Align every response with a concrete manuscript change or explain why no change was made.
+7. Mark changes in the revised manuscript with the venue-approved mechanism. If allowed, recommend `\textcolor{blue}{...}` or a similar visible change marker, then remove it for final camera-ready submission if required.
 
 Response template:
 
 ```text
-Comment: [reviewer comment]
+Reviewer's Comment: [reviewer comment]
 
 Response: Thank you for pointing this out. We have revised Section X to clarify [issue]. Specifically, we now [change]. The revised text reads: "[short excerpt]". This change addresses the concern by [reason].
+
+Changes in the Revised Manuscript: Section X, paragraph Y now states: "\textcolor{blue}{[revised manuscript text]}."
 ```
 
 When disagreeing:
@@ -77,3 +81,16 @@ When disagreeing:
 ```text
 Response: We agree that [shared premise]. However, [evidence or constraint]. To avoid ambiguity, we have added [clarification/limitation] in Section X.
 ```
+
+## Response Letter Workflow
+
+Use this structure for major and minor revisions:
+
+1. Create a short opening note thanking the editor and reviewers.
+2. Split comments by reviewer and preserve numbering exactly.
+3. Under each comment, generate `Reviewer's Comment`, `Response`, and `Changes in the Revised Manuscript`.
+4. Keep the tone polite, respectful, and specific. Do not sound defensive.
+5. Use evidence, new experiments, added citations, or manuscript locations to support each answer.
+6. If the authors cannot make a requested change, explain the constraint and add a clarifying limitation in the manuscript.
+7. Maintain a change log that maps response-letter claims to section, page, paragraph, figure, table, or equation numbers.
+8. For LaTeX manuscripts, suggest `\textcolor{blue}{...}` for changed text only when allowed by the venue or editor.

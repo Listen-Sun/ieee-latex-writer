@@ -31,7 +31,7 @@ Use $ieee-latex-writer to audit my IEEE LaTeX paper before submission.
 python scripts/audit_ieee_latex.py path/to/main.tex
 ```
 
-The audit checks common risks such as missing IEEEtran class usage, risky formatting packages, unresolved citations, missing figure files, and float caption/label ordering.
+The audit checks common risks such as missing IEEEtran class usage, risky formatting packages, unresolved citations, missing figure files, float caption/label ordering, double-blind identity leaks, Chinese/full-width punctuation, percent and unit formatting, math-environment prose, and dirty BibTeX fields.
 
 This does not replace the official IEEE Template Selector, IEEE LaTeX Analyzer, Reference Preparation Assistant, PDF Checker, or target venue instructions.
 

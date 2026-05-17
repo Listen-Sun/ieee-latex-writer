@@ -105,6 +105,51 @@ IEEE Author Center notes that IEEE graphics submissions accept PS, EPS, PDF, PNG
 - Keep BibTeX fields complete enough for IEEE formatting: authors, title, venue, year, pages/article number, DOI when available.
 - Use `\bibliographystyle{IEEEtran}` with BibTeX unless the venue gives a different instruction.
 
+## Double-Blind And Preprints
+
+For double-blind review:
+
+- Replace author blocks with the venue's anonymous template or neutral placeholders.
+- Remove acknowledgments, grant numbers, funding IDs, project IDs, ORCID IDs, personal websites, institutional repositories, and lab-specific URLs.
+- Neutralize unique internal equipment or software descriptions that identify the lab. Prefer generic descriptions unless the detail is scientifically necessary.
+- Rewrite first-person self-citations. Use "Li et al. [1]" or "the approach in [1]" instead of "our previous work [1]".
+- Check figure metadata, filenames, supplementary files, and comments for identity leaks.
+
+For preprints:
+
+- Verify the venue's current arXiv and preprint policy before submission.
+- Cite an allowed preprint in third person during double-blind review.
+- Avoid explaining that the submitted manuscript is an extension of "our arXiv paper" unless the venue explicitly permits such disclosure.
+- When overlap must be explained, use neutral wording and follow the venue's disclosure mechanism.
+
+## BibTeX Sanitization
+
+Clean exported `.bib` entries before final submission:
+
+- Protect proper nouns and acronyms with double braces: `{{Kalman}} filter`, `{{IEEE}}`, `{{ROS}}`, `{{LiDAR}}`.
+- Remove fields that usually pollute IEEEtran output: `publisher`, `issn`, `isbn`, `url`, `arxivId`, `archivePrefix`, `eprint`, `abstract`, `keywords`, and `language`, unless the venue requires them.
+- Keep useful identifiers such as `doi` when present and accurate.
+- Normalize IEEE journal names to official abbreviations, for example `IEEE Trans. Robot.` instead of `IEEE Transactions on Robotics`.
+- Keep BibTeX keys stable when editing so existing `\cite{...}` commands do not break.
+
+Common IEEE abbreviations:
+
+- `IEEE Transactions on Robotics` -> `IEEE Trans. Robot.`
+- `IEEE Transactions on Automatic Control` -> `IEEE Trans. Automat. Control`
+- `IEEE Transactions on Control Systems Technology` -> `IEEE Trans. Control Syst. Technol.`
+- `IEEE Robotics and Automation Letters` -> `IEEE Robot. Autom. Lett.`
+- `IEEE Transactions on Intelligent Transportation Systems` -> `IEEE Trans. Intell. Transp. Syst.`
+
+## Control And Robotics Notation
+
+- Keep state, input, disturbance, output, estimate, and error notation stable across the entire paper.
+- Use a defined convention such as `$x(t)$`, `$u(t)$`, `$w(t)$`, and `$y(t)$` for continuous-time systems.
+- Use `$x_k$`, `$x_{k+1}$`, `$u_k$`, `$w_k$`, and `$y_k$` for discrete-time systems.
+- Define the sampling relationship if both forms appear, for example `$x_k = x(kT_s)$`.
+- Use bold or matrix notation consistently. Do not switch between `$A$`, `$\mathbf{A}$`, and `$\bm{A}$` without a rule.
+- For Lyapunov arguments, state assumptions, choose `$V(x)$`, prove positive definiteness, derive `$\dot{V}(x)$` or `$\Delta V_k$`, and cite or state the theorem connecting the inequality to stability.
+- Distinguish local, global, asymptotic, exponential, input-to-state, and practical stability claims.
+
 ## Language Polish
 
 Prefer:

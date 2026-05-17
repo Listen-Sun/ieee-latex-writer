@@ -42,6 +42,11 @@ The audit checks common risks:
 - Risky formatting packages and margin hacks
 - Missing figure files and discouraged graphics extensions
 - Caption/label ordering in floats
+- Chinese characters and Chinese punctuation in the manuscript body
+- Raw or suspicious percent/unit formatting such as `10%`, `10m`, `3V`, or `180C`
+- Narrative text inside math environments without `\text{...}`
+- Double-blind identity leaks such as acknowledgments, grant numbers, author affiliations, and first-person self-citations
+- Dirty BibTeX fields and common IEEE journal names that should be abbreviated
 
 The audit is not a replacement for compilation or IEEE's official LaTeX Analyzer.
 
