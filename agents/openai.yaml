@@ -1,4 +1,4 @@
 interface:
   display_name: "IEEE LaTeX Writer Open"
-  short_description: "Draft, anonymize, revise, and audit IEEE LaTeX papers."
-  default_prompt: "Use $ieee-latex-writer to draft, anonymize, revise, or audit an IEEE-style LaTeX paper."
+  short_description: "Shape, draft, anonymize, revise, and audit IEEE robotics papers."
+  default_prompt: "Use $ieee-latex-writer to strengthen the research narrative, experiments, and LaTeX of an IEEE-style robotics paper."

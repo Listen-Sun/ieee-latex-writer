@@ -1,24 +1,25 @@
 ---
 name: ieee-latex-writer
-description: Open-community IEEE LaTeX paper writing, revision, formatting, and submission-preparation support for IEEEtran journal, conference, letter, and magazine manuscripts. Use when Codex needs to draft, polish, anonymize, or audit IEEE-style LaTeX papers; restructure abstracts, introductions, methods, experiments, results, conclusions, figures, tables, equations, BibTeX references, or reviewer responses; apply domain-specific IEEE conventions for robotics/control, computer science/intelligent systems, communications/signal processing, or power/energy systems; create IEEEtran-compatible LaTeX skeletons; or run static checks on .tex/.bib projects before IEEE submission.
+description: Open-community research-paper and IEEE LaTeX writing support for robotics, reinforcement learning, control, intelligent systems, IEEEtran journals, RA-L, T-RO, T-AC, RSS, CoRL, ICRA, IROS, and related venues. Use when Codex needs to draft, polish, anonymize, audit, or strategically reshape research manuscripts; improve scientific narrative, contribution coherence, reviewer awareness, experimental rigor, domain-specific notation, LaTeX structure, BibTeX references, reviewer responses, or static checks on .tex/.bib projects before submission.
 ---
 
 # IEEE LaTeX Writer Open
 
-Open-community skill for writing, revising, anonymizing, and auditing IEEE LaTeX manuscripts. Keep the workflow general enough for many IEEE venues, but always let the target venue's current author instructions override these defaults.
+Open-community skill for writing, revising, anonymizing, and auditing robotics, control, reinforcement learning, intelligent systems, and IEEE-style LaTeX manuscripts. Treat paper strategy and scientific argument quality as first-class tasks, then apply venue style, LaTeX mechanics, and static checks.
 
 ## Core Workflow
 
 1. Identify the target venue, IEEE society/field, manuscript type, page limit, review mode, and submission stage: first submission, double-blind review, revision, camera-ready, or archive cleanup.
 2. Verify format-sensitive requirements when they may have changed: venue page, IEEE Template Selector, IEEE Author Center, page limits, anonymity policy, preprint/arXiv policy, supplementary-material rules, and bibliography requirements.
 3. Work in IEEEtran-compatible LaTeX. Do not modify margins, fonts, title spacing, bibliography style, or class internals unless the venue explicitly allows it.
-4. Route the manuscript through the relevant domain module before line editing: robotics/control, computer science/intelligent systems, communications/signal processing, power/energy systems, or general IEEE engineering.
-5. Improve the scientific argument first: claim, gap, method, evidence, limitation, contribution, and reproducibility. Then polish style, notation, and LaTeX mechanics.
-6. Preserve user source structure. Avoid overwriting macros, comments, figure paths, bibliography databases, or package choices unless they conflict with IEEE requirements.
-7. For double-blind review, run an anonymity pass before style polishing. Detect and flag author names, affiliations, acknowledgments, grant numbers, ORCID IDs, repository links, institutional URLs, lab-specific datasets, and distinctive equipment/software descriptions.
-8. Rewrite self-citations in third person. Use forms such as "In [1], Smith et al. developed..." or "The method in [1]..." and never "In our previous work [1]..." during double-blind review.
-9. For revision tasks, create a response letter with a fixed mapping for every reviewer item: `Reviewer's Comment`, `Response`, and `Changes in the Revised Manuscript`. Keep the tone polite, respectful, specific, and evidence-based.
-10. Run compilation or static audit when files are available. If compilation is unavailable, run or simulate `scripts/audit_ieee_latex.py <project-or-main.tex>` and report residual risks.
+4. Identify the paper strategy before line editing: core novelty, likely reviewer concerns, missing evidence, weak ablations, venue fit, and whether secondary ideas dilute the main contribution.
+5. Route the manuscript through the relevant venue and domain modules before polishing: robotics/control, RL robotics, computer science/intelligent systems, communications/signal processing, power/energy systems, or general IEEE engineering.
+6. Improve the scientific argument first: claim, gap, method, evidence, limitation, contribution, and reproducibility. Then polish style, notation, and LaTeX mechanics.
+7. Preserve user source structure. Avoid overwriting macros, comments, figure paths, bibliography databases, or package choices unless they conflict with IEEE requirements.
+8. For double-blind review, run an anonymity pass before style polishing. Detect and flag author names, affiliations, acknowledgments, grant numbers, ORCID IDs, repository links, institutional URLs, lab-specific datasets, and distinctive equipment/software descriptions.
+9. Rewrite self-citations in third person. Use forms such as "In [1], Smith et al. developed..." or "The method in [1]..." and never "In our previous work [1]..." during double-blind review.
+10. For revision tasks, create a response letter with a fixed mapping for every reviewer item: `Reviewer's Comment`, `Response`, and `Changes in the Revised Manuscript`. Keep the tone polite, respectful, specific, and evidence-based.
+11. Run compilation or static audit when files are available. If compilation is unavailable, run or simulate `scripts/audit_ieee_latex.py <project-or-main.tex>` and report residual risks.
 
 ## Resource Map
 
@@ -28,20 +29,77 @@ Open-community skill for writing, revising, anonymizing, and auditing IEEE LaTeX
 - Use `assets/minimal-ieee-paper.tex` only as a lightweight starter skeleton. For real submissions, direct users to the official IEEE Template Selector or target venue package.
 - Run `scripts/audit_ieee_latex.py <project-or-main.tex>` for lightweight static checks. Treat it as a preflight aid, not a replacement for compilation or official IEEE validation tools.
 
+## Paper Strategy Layer
+
+Before drafting or revising, identify the paper's strategic shape:
+
+- State the core novelty in one sentence. Separate it from supporting modules, implementation details, and replaceable engineering components.
+- Map the title, abstract, introduction, method, experiments, and conclusion to the same central claim. If any section sells a different paper, revise it.
+- Identify likely reviewer attacks: missing baselines, weak ablations, scalability, sim-to-real gap, hardware fragility, unclear novelty, statistical weakness, excessive complexity, or overclaiming.
+- Suppress secondary ideas that dilute the main contribution. Move them to ablations, implementation details, appendices, or limitations unless they are essential to the claim.
+- Label each contribution as methodological novelty, scientific insight, system integration, or engineering optimization. Do not present routine tuning as a conceptual breakthrough.
+- Check whether the paper would still stand if an auxiliary module were replaced. If yes, describe that module as engineering support, not the main innovation.
+
+## Research Narrative Constraints
+
+Use this as the main reasoning layer for paper quality:
+
+- Enforce a closed chain: Problem -> Limitation -> Insight -> Method -> Evidence. Every abstract, introduction, and conclusion should preserve this chain.
+- Make every contribution map to a prior limitation, a method component, and a concrete evidence source such as theorem, ablation, benchmark, deployment, or failure analysis.
+- Avoid floating modules. Every estimator, reward term, transformer block, curriculum stage, filter, loss, or controller component must have a causal role in the stated limitation.
+- Force introductions to explain why existing methods fundamentally fail in the target setting, not merely that they perform worse.
+- Distinguish engineering optimization, methodological novelty, scientific insight, and system integration. Use different claim strength for each.
+- Identify the core innovation versus auxiliary modules. Do not let a long method list hide a weak central idea.
+- Keep abstract, introduction, and conclusion consistent in claim scope, evidence, and limitations.
+- Require ablation isolation logic: each ablation should test one causal hypothesis, not just remove a convenient block.
+- Avoid unsupported claims. If evidence is missing, weaken the statement or add a TODO rather than inventing a result.
+- Discourage novelty inflation. Prefer "we show that X enables Y under Z" over broad claims of generality.
+
+## Venue Style Adaptation
+
+Adapt emphasis to the target venue:
+
+- `T-RO` and `RA-L`: balance technical clarity, embodied validation, hardware realism, failure cases, and reproducibility. Prefer concise claims with strong experiments.
+- `T-AC` and control-theory venues: prioritize formal problem statements, assumptions, theorem/proof structure, stability or convergence guarantees, and precise notation.
+- `ICRA` and `IROS`: emphasize a clear robotics problem, system contribution, implementation detail, comparisons, and real or credible simulated deployment.
+- `RSS`: favor insight-driven robotics papers with clean problem framing, convincing analysis, strong experiments, and restrained writing.
+- `CoRL`: favor learning-based robotics, representation, policy learning, generalization, sim-to-real evidence, and careful ablations.
+- NeurIPS-style robotics papers: emphasize representation learning, objective design, benchmark protocol, statistical rigor, and generalizable insight over system description alone.
+- For theorem-heavy papers, lead with assumptions, definitions, lemmas, guarantees, and proof intuition.
+- For empirical papers, lead with a sharp failure mode, method intuition, baselines, ablations, and credible deployment or benchmark evidence.
+- For system papers, lead with integration constraints, reliability, latency, hardware, interfaces, and failure recovery.
+
 ## Domain-Specific Modules
 
 Select the closest module from the venue, topic, or manuscript vocabulary. If multiple modules apply, combine them conservatively and state the chosen assumptions.
 
 ### Robotics, Automation, And Control
 
-Typical venues include T-RO, T-ASE, L-CSS, T-CST, T-AC, RA-L, ICRA, IROS, CDC, and ACC.
+Typical venues include T-RO, T-ASE, L-CSS, T-CST, T-AC, RA-L, ICRA, IROS, RSS, CoRL, CDC, and ACC.
 
 - Enforce notation continuity for states, inputs, disturbances, outputs, estimates, errors, gains, frames, and constraints across prose, equations, algorithms, figures, and tables.
 - Use standard italic symbols for scalars and a consistent bold or bold-italic convention for vectors, matrices, and tensors. Do not switch between `$A$`, `$\mathbf{A}$`, `$\boldsymbol{A}$`, and `$\bm{A}$` without defining a convention.
 - Distinguish continuous-time systems such as `$x(t)$`, `$\dot{x}(t)$`, and `$u(t)$` from discrete-time systems such as `$x_k$`, `$x_{k+1}$`, and `$u_k$`. Define the sampling relation when both appear, for example `$x_k=x(kT_s)$`.
 - For Lyapunov, barrier, passivity, ISS, or MPC stability arguments, define the candidate function, domain, assumptions, positive definiteness, radial unboundedness when needed, derivative or difference bounds, and the theorem-level stability claim. Use rigorous inequalities such as `$\dot{V}(x)\le -\alpha(\|x\|)$` or `$\Delta V_k\le -\ell(x_k,u_k)$`; do not jump from algebra to "therefore stable" without boundary conditions.
 - Separate simulation parameters from real hardware validation. State simulator, physics settings, random seeds, controller frequency, sensor suite, compute platform, calibration, environment, and safety constraints when relevant.
+- For modern embodied-AI papers, define the observation space, latent representation, adaptation mechanism, policy/controller interface, reward or objective, randomization protocol, and deployment pipeline as separate concepts.
+- For blind locomotion or adaptation-based control, distinguish what is privileged during training from what is deployable on the robot.
 - Avoid identity leaks from lab-specific robots, motion-capture rooms, internal software stacks, facility names, or repository URLs during double-blind review.
+
+### Reinforcement Learning Robotics Module
+
+Use this module for RL locomotion, manipulation, navigation, sim-to-real control, adaptation, and partially observable embodied systems.
+
+- Formulate the task as an MDP or POMDP when appropriate. Define state, observation, action, transition assumptions, reward, discount, horizon, termination, and partial observability.
+- Separate privileged observations from deployable observations. Make clear which signals are available only in simulation, teacher policies, critics, estimators, or training-time adaptation.
+- Define observation history handling: frame stacking, recurrent policy, temporal convolution, transformer, history encoder, or state estimator. Explain why memory is needed.
+- Separate observation design, latent representation, adaptation module, policy head, reward design, curriculum, randomization, and deployment pipeline. Do not merge them into a vague "network architecture".
+- Specify reward terms with equations or tables, including weights, units, clipping, termination penalties, and which terms are diagnostic versus essential.
+- Report terrain, command, dynamics, sensor, latency, actuator, payload, friction, mass, push, and noise randomization. State which randomizations are used for robustness and which model known real-world uncertainty.
+- Define disturbance protocols: push magnitude/duration, terrain geometry, sensor dropout, command changes, external loads, recovery windows, and failure thresholds.
+- Include failure metrics, not only success metrics: falls, resets, foot slippage, collisions, tracking loss, energy spikes, unsafe torques, overheating, timeout, or recovery failure.
+- State sim-to-real assumptions: simulator, actuator model, latency, control frequency, policy frequency, observation delay, filtering, calibration, and onboard compute.
+- Do not claim real-time deployment without latency, frequency, and hardware evidence.
 
 ### Computer Science And Intelligent Systems
 
@@ -74,6 +132,65 @@ Typical venues include T-PWRS, T-PS, T-SG, T-TE, T-IA, T-PEL, PESGM, ECCE, and i
 - Describe bus configuration, line data, generator/load models, contingencies, and network topology clearly. When using IEEE standard test systems, name them precisely, for example IEEE 14-bus, 39-bus, 57-bus, or 118-bus systems.
 - Separate simulation studies from field, HIL, OPAL-RT, RTDS, microgrid, inverter, or hardware validation. State control cycle, sampling rate, grid code assumptions, and protection constraints.
 
+## Method Structure Templates
+
+Choose a template that matches the paper's real contribution. Keep section names venue-appropriate, but preserve the conceptual separation.
+
+For robotics RL papers:
+
+1. Problem Formulation
+2. System Overview
+3. Observation and State Design
+4. Latent Representation or Estimator
+5. Adaptation Module
+6. Policy or Controller
+7. Reward and Training Objective
+8. Curriculum and Randomization
+9. Safety, Stability, or Constraint Handling
+10. Deployment Pipeline
+11. Complexity and Runtime
+
+For locomotion papers:
+
+1. Robot Model and Assumptions
+2. Command and Terrain Distribution
+3. Observation History and Proprioception
+4. Policy Architecture or Controller Interface
+5. Reward, Termination, and Curriculum
+6. Domain Randomization and Disturbances
+7. Hardware Deployment
+8. Failure Analysis and Recovery
+
+For partially observable control papers:
+
+1. POMDP or Output-Feedback Formulation
+2. Observable Signals and Hidden Variables
+3. Estimator, Belief, or History Encoder
+4. Controller or Policy Synthesis
+5. Stability, Robustness, or Safety Argument
+6. Simulation and Real-World Validation
+7. Complexity, Latency, and Implementation
+
+Always separate observation, latent representation, adaptation, policy head, reward design, curriculum, and deployment pipeline. If two are combined, state why the coupling is necessary.
+
+## Experimental Integrity Constraints
+
+- Do not fabricate benchmark results, statistical significance, datasets, runtime numbers, hardware specs, citations, hyperparameters, ablation outcomes, or real-world deployment claims.
+- Use TODO placeholders for unknown values: `TODO: insert baseline`, `TODO: report seed count`, `TODO: verify hardware`, or `TODO: confirm citation`.
+- Weaken claims instead of inventing evidence. Use "suggests", "in this setting", or "under the tested conditions" when evidence is limited.
+- Distinguish simulation, emulation, HIL, real hardware, and field deployment. Do not let simulation-only evidence imply real-world robustness.
+- Do not claim real-time control without policy frequency, control loop frequency, latency, onboard hardware, and measurement method.
+- Report number of seeds, variance or confidence intervals, episode counts, evaluation protocol, and failure criteria when experimental claims depend on stochastic learning.
+- Treat missing baselines and weak ablations as strategic risks, not cosmetic gaps.
+
+## Innovation Quality Constraints
+
+- Avoid unnecessary module stacking, bag-of-tricks designs, random attention/transformer additions, and unjustified architectural complexity.
+- Require causal justification for every module: what limitation it targets, what signal it uses, why it should help, and which ablation isolates it.
+- Prefer mechanistic insight over architectural inflation. A simple estimator with a clear failure-mode argument is stronger than an unexplained large network.
+- Discuss computational tradeoffs: parameter count, inference latency, memory, training cost, onboard compute, and control frequency where relevant.
+- If a module is replaceable, describe it as one implementation of the idea rather than the idea itself.
+
 ## Drafting Rules
 
 - Write in a precise technical voice: concrete nouns, active verbs where natural, and claims tied to evidence.
@@ -87,6 +204,17 @@ Typical venues include T-PWRS, T-PS, T-SG, T-TE, T-IA, T-PEL, PESGM, ECCE, and i
 - For preprints, verify the venue's current policy before citing, uploading, or describing overlap. If allowed in double-blind review, refer to the preprint neutrally in third person.
 - Reduce vocabulary repetition by rotating precise alternatives. Use `present`, `introduce`, `formulate`, `design`, or `develop` instead of repeating `propose`; use `address`, `tackle`, `mitigate`, `alleviate`, or `solve` according to the strength of the claim; use `demonstrate`, `show`, `validate`, or `evaluate` according to the evidence.
 - Do not overclaim novelty, causality, superiority, or generality. Qualify claims by dataset, operating condition, assumptions, and statistical confidence.
+
+## Anti-LLM Writing Constraints
+
+- Avoid repetitive rhetorical templates such as "To address this issue", "Extensive experiments demonstrate", "In order to", "This paper proposes", and "The main contributions are summarized as follows".
+- Vary paragraph rhythm naturally. Do not make every paragraph follow the same four-sentence arc or the same contrast-transition-result pattern.
+- Keep the abstract less templated when possible. It should still cover problem, gap, method, and evidence, but not read like a rigid form.
+- Use concrete technical phrasing over generic praise. Prefer "estimates terrain slope from proprioceptive history" over "effectively captures complex environmental features".
+- Limit adjective inflation: "robust", "novel", "efficient", "comprehensive", and "state-of-the-art" require evidence or should be removed.
+- Avoid excessive contribution bullets. Use bullets when they clarify the argument, not to inflate the paper.
+- Allow moderate asymmetry in prose. Strong papers often spend more space on the hard idea and less on routine implementation.
+- Replace over-smooth transitions with precise logical links: cause, limitation, evidence, assumption, or failure mode.
 
 ## LaTeX Rules
 
