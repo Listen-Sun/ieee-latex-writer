@@ -2,7 +2,7 @@
 
 面向 Codex 的 IEEE LaTeX 论文写作技能，适用于 IEEEtran 期刊、会议、Letters、Magazine 以及常见 IEEE 风格投稿流程。
 
-它不只是格式模板助手，也覆盖研究叙事、贡献凝练、双盲匿名检查、实验严谨性、BibTeX 清理、审稿回复和投稿前静态审查。机器人、强化学习、控制和智能系统是增强模块，但不是唯一适用范围。
+它不只是格式模板助手，也覆盖研究叙事、贡献凝练、双盲匿名检查、实验严谨性、正式文献版本确认、BibTeX 清理、审稿回复和投稿前静态审查。机器人、强化学习、控制和智能系统是增强模块，但不是唯一适用范围。
 
 English version: [READMEEN.md](READMEEN.md)
 
@@ -14,7 +14,8 @@ English version: [READMEEN.md](READMEEN.md)
 - 适配 IEEE Transactions、Letters、Conference、RA-L、T-RO、T-AC、ICRA、IROS、RSS、CoRL 等场景
 - 双盲匿名检查：作者、机构、基金、ORCID、自引和实验室识别信息
 - Response Letter 工作流：逐条映射审稿意见、回复和稿件修改位置
-- BibTeX 清理：大小写保护、冗余字段移除、IEEE 期刊会议名缩写
+- 授权学术文献检索工作流：DOI、出版社记录、访问状态和正式发表版本确认
+- BibTeX 清理：大小写保护、冗余字段移除、DOI 保留、arXiv/预印本处理、IEEE 期刊会议名缩写
 - IEEE LaTeX 静态审查脚本
 
 ## 安装
@@ -68,6 +69,10 @@ Use $ieee-latex-writer to audit my IEEE paper for double-blind review.
 Use $ieee-latex-writer to clean my BibTeX file and check IEEE formatting risks.
 ```
 
+```text
+Use $ieee-latex-writer to find the formal publication version, DOI, access status, and IEEEtran BibTeX for these papers.
+```
+
 ## 目录
 
 - `SKILL.md`: 技能核心说明和触发描述
@@ -75,6 +80,7 @@ Use $ieee-latex-writer to clean my BibTeX file and check IEEE formatting risks.
 - `references/`: IEEE 写作、LaTeX 工作流和审稿回复参考
 - `assets/ieee-official-templates/`: 官方 IEEEtran 模板和说明文件
 - `scripts/audit_ieee_latex.py`: IEEE LaTeX 项目静态审查脚本
+- `scripts/clean_ieee_bib.py`: 保守的 IEEEtran BibTeX 清理脚本
 - `.codex-plugin/plugin.json`: 可选的插件式分发元数据
 
 ## 静态审查
@@ -86,6 +92,14 @@ python scripts/audit_ieee_latex.py path/to/main.tex
 该脚本检查 IEEEtran 类、风险包、未解析引用、缺失图片、caption/label 顺序、双盲泄露、中文或全角标点、百分号和单位格式、数学环境中的 prose、BibTeX 脏字段等常见问题。
 
 它不能替代官方 IEEE Template Selector、IEEE LaTeX Analyzer、Reference Preparation Assistant、PDF Checker 或目标 venue 的投稿说明。
+
+## BibTeX 清理
+
+```bash
+python scripts/clean_ieee_bib.py path/to/references.bib
+```
+
+脚本会在输入文件旁生成 `*_ieee_clean.bib`，保留引用键，移除常见导出噪声字段，并保护机器人/控制/学习领域常见缩写的标题大小写。投稿前仍需人工检查 DOI 完整性、venue 正确性、重复条目和 arXiv-only 条目。
 
 ## License
 

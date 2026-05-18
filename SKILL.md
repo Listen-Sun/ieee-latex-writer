@@ -1,6 +1,6 @@
 ---
 name: ieee-latex-writer
-description: Open-community research-paper and IEEE LaTeX writing support for most IEEE fields, including IEEEtran journals, conferences, letters, magazines, robotics, reinforcement learning, control, intelligent systems, communications, signal processing, power, energy, and related venues. Use when Codex needs to draft, polish, anonymize, audit, or strategically reshape IEEE-style research manuscripts; improve scientific narrative, contribution coherence, reviewer awareness, experimental rigor, domain-specific notation, LaTeX structure, BibTeX references, reviewer responses, or static checks on .tex/.bib projects before submission.
+description: Open-community research-paper and IEEE LaTeX writing support for most IEEE fields, including IEEEtran journals, conferences, letters, magazines, robotics, reinforcement learning, control, intelligent systems, communications, signal processing, power, energy, and related venues. Use when Codex needs to draft, polish, anonymize, audit, or strategically reshape IEEE-style research manuscripts; improve scientific narrative, contribution coherence, reviewer awareness, experimental rigor, domain-specific notation, LaTeX structure, BibTeX references, reviewer responses, authorized scholarly paper lookup, formal publication-version verification, DOI/publisher metadata checks, IEEEtran BibTeX cleanup, or static checks on .tex/.bib projects before submission.
 ---
 
 # IEEE LaTeX Writer Open
@@ -19,7 +19,8 @@ Open-community skill for writing, revising, anonymizing, and auditing IEEE-style
 8. For double-blind review, run an anonymity pass before style polishing. Detect and flag author names, affiliations, acknowledgments, grant numbers, ORCID IDs, repository links, institutional URLs, lab-specific datasets, and distinctive equipment/software descriptions.
 9. Rewrite self-citations in third person. Use forms such as "In [1], Smith et al. developed..." or "The method in [1]..." and never "In our previous work [1]..." during double-blind review.
 10. For revision tasks, create a response letter with a fixed mapping for every reviewer item: `Reviewer's Comment`, `Response`, and `Changes in the Revised Manuscript`. Keep the tone polite, respectful, specific, and evidence-based.
-11. Run compilation or static audit when files are available. If compilation is unavailable, run or simulate `scripts/audit_ieee_latex.py <project-or-main.tex>` and report residual risks.
+11. For citation work, verify the formal publication version, DOI, venue, pages/article number, publisher page, and authorized/open access status before inserting or rewriting BibTeX.
+12. Run compilation or static audit when files are available. If compilation is unavailable, run or simulate `scripts/audit_ieee_latex.py <project-or-main.tex>` and report residual risks.
 
 ## Resource Map
 
@@ -28,6 +29,7 @@ Open-community skill for writing, revising, anonymizing, and auditing IEEE-style
 - Read `references/revision-and-review.md` when revising a draft, building a response letter, mapping reviewer comments to manuscript changes, or marking changed text.
 - Use `assets/ieee-official-templates/` as the bundled IEEEtran starter package when a local template is needed. Prefer the target venue's current template package or IEEE Template Selector for real submissions, then fall back to the bundled official journal sample.
 - Run `scripts/audit_ieee_latex.py <project-or-main.tex>` for lightweight static checks. Treat it as a preflight aid, not a replacement for compilation or official IEEE validation tools.
+- Run `scripts/clean_ieee_bib.py <references.bib>` when the user wants a deterministic first pass over exported BibTeX before manual DOI, venue, and formal-version verification.
 
 ## Paper Strategy Layer
 
@@ -238,10 +240,46 @@ Apply this protocol whenever creating, editing, or auditing `.bib` files:
 
 1. Preserve citation keys unless the user asks to rename them; update all `\cite{...}` commands if a key must change.
 2. Protect proper nouns, algorithm names, standards, software names, and acronyms with braces, preferably double braces for fragile terms: `{{Kalman}} filter`, `{{IEEE}}`, `{{LiDAR}}`, `{{ROS}}`, `{{SLAM}}`, `{{MIMO}}`, and `{{OFDM}}`.
-3. Remove fields that usually pollute IEEEtran output or leak irrelevant metadata: `publisher`, `issn`, `isbn`, `url`, `doi`, `arxivId`, `archivePrefix`, `eprint`, `abstract`, `keywords`, `language`, `month`, and `note`, unless the venue explicitly requires them. For Early Access articles or preprints without assigned volume/pages, preserve `doi` or `arxivId` so the work remains legally and technically traceable.
-4. Keep the minimal clean field set by entry type: authors, title, journal or booktitle, volume/number/pages or article number when available, and year.
-5. Normalize IEEE venue names to official abbreviations. Examples: `IEEE Transactions on Robotics` -> `IEEE Trans. Robot.`, `IEEE Transactions on Automatic Control` -> `IEEE Trans. Automat. Control`, `IEEE Transactions on Signal Processing` -> `IEEE Trans. Signal Process.`, `IEEE Transactions on Wireless Communications` -> `IEEE Trans. Wireless Commun.`, and `IEEE Transactions on Power Systems` -> `IEEE Trans. Power Syst.`.
-6. Check capitalization after cleanup by compiling or inspecting the generated `.bbl` when possible.
+3. Remove fields that usually pollute IEEEtran output or leak irrelevant metadata: `publisher`, `issn`, `isbn`, `url`, `file`, `abstract`, `keywords`, `language`, `month`, and `note`, unless the venue explicitly requires them.
+4. Preserve `doi` whenever it exists. Preserve `url`, `eprint`, `archivePrefix`, `primaryClass`, or arXiv metadata only when DOI is unavailable, the work is truly preprint-only, or the venue requires traceable preprint information.
+5. Use `journal`, `booktitle`, `volume`, `number`, `pages`, and `articleno` or article-number fields according to the formal publisher record.
+6. Run `scripts/clean_ieee_bib.py path/to/references.bib` for a conservative cleanup pass. The script writes `*_ieee_clean.bib` beside the input, preserves keys, removes common noisy fields, and braces common robotics/control/learning acronyms in titles.
+7. Review script output manually for DOI completeness, venue correctness, duplicate records, arXiv-only entries, and acronym choices before submission.
+8. Keep the minimal clean field set by entry type: authors, title, journal or booktitle, volume/number/pages or article number when available, and year.
+9. Normalize IEEE venue names to official abbreviations. Examples: `IEEE Transactions on Robotics` -> `IEEE Trans. Robot.`, `IEEE Transactions on Automatic Control` -> `IEEE Trans. Automat. Control`, `IEEE Transactions on Signal Processing` -> `IEEE Trans. Signal Process.`, `IEEE Transactions on Wireless Communications` -> `IEEE Trans. Wireless Commun.`, and `IEEE Transactions on Power Systems` -> `IEEE Trans. Power Syst.`.
+10. Check capitalization after cleanup by compiling or inspecting the generated `.bbl` when possible.
+
+## Scholarly Access And Formal Citation Workflow
+
+Use this workflow when finding, verifying, replacing, or adding scholarly citations for IEEE papers.
+
+### Access Safety
+
+- Never save, log, request, infer, export, or autofill usernames, passwords, cookies, tokens, VPN credentials, SSO data, browser profiles, or other authentication material.
+- Use only access the user already has through a legal local browser login, institutional subscription, open access, author-posted public copy, or files the user provided.
+- If a login page, CAPTCHA, MFA, Shibboleth, SAML, proxy, VPN, or institutional SSO screen appears, pause and ask the user to complete it manually in their browser.
+- Do not bypass paywalls or access controls. Do not use piracy mirrors, shared accounts, leaked PDFs, cookie export, command-line cookie reuse, or access circumvention.
+- Download PDFs only when institutional terms allow access, the PDF is open access, the PDF is legally public on an author/institution page, or the user already provided the file.
+- Avoid bulk crawling. Default to 1-20 papers. If a request exceeds 20 papers, ask for confirmation and propose batching.
+
+### Formal-Version Lookup
+
+1. Normalize inputs: accept paper titles, DOI, arXiv links, publisher URLs, BibTeX keys, PDFs, or a research topic.
+2. Search for the most formal available version in this order: journal article; transactions or letters; top peer-reviewed conference proceedings; other peer-reviewed proceedings; arXiv or other preprint.
+3. For robotics, learning, control, and IEEE-paper writing contexts, prefer formal versions from T-RO, RA-L, Science Robotics, Nature Machine Intelligence, ICRA, IROS, RSS, CoRL, and comparable peer-reviewed venues over preprints.
+4. Compare preprint and formal records by title, authors, year, DOI, venue, and abstract. If arXiv and formal versions both exist, return the formal version and label arXiv as a preprint.
+5. Record `title`, `authors`, `year`, `venue`, `volume/issue/pages/article number`, `DOI`, `publisher page URL`, `open/authorized PDF URL`, `publication type`, `peer-reviewed?`, and `arXiv-only?`.
+6. Mark access status as one of: `authorized`, `open access`, `author public copy`, `metadata only`, `needs user login`, `blocked`, or `user-provided`.
+7. If uncertain, state the uncertainty and the exact evidence that would resolve it, such as publisher page access, DOI confirmation, or a user-provided PDF.
+
+For formal-version lookup, output:
+
+| Candidate | Formal version? | Venue | Year | DOI | Access status | Notes |
+| --- | --- | --- | --- | --- | --- | --- |
+
+For `.bib` updates, report `Added/updated keys`, `Removed/cleaned fields`, `Unresolved papers`, and `Remaining risks`.
+
+For related-work recommendations, classify references by their role in the paper argument: problem motivation, benchmark baseline, method ancestor, competing approach, theoretical support, dataset or hardware precedent, safety limitation, ablation justification, or reviewer-expected citation.
 
 ## Static Audit Engine
 

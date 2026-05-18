@@ -2,7 +2,7 @@
 
 A Codex Skill for research-paper writing across most IEEE fields, including IEEEtran journals, conferences, Letters, Magazine-style papers, and common IEEE-style submission workflows.
 
-It goes beyond LaTeX formatting: it helps improve research narrative, contribution coherence, double-blind anonymity, experimental rigor, BibTeX cleanup, reviewer responses, and pre-submission static auditing. Robotics, reinforcement learning, control, and intelligent systems are enhanced modules, not the only supported scope.
+It goes beyond LaTeX formatting: it helps improve research narrative, contribution coherence, double-blind anonymity, experimental rigor, formal citation verification, BibTeX cleanup, reviewer responses, and pre-submission static auditing. Robotics, reinforcement learning, control, and intelligent systems are enhanced modules, not the only supported scope.
 
 中文版本：[README.md](README.md)
 
@@ -14,7 +14,8 @@ It goes beyond LaTeX formatting: it helps improve research narrative, contributi
 - Venue-aware adaptation for IEEE Transactions, Letters, conferences, RA-L, T-RO, T-AC, ICRA, IROS, RSS, CoRL, and related venues
 - Double-blind anonymity checks for authors, affiliations, grants, self-citations, and lab-identifying details
 - Response Letter workflow that maps reviewer comments to concrete manuscript changes
-- BibTeX cleanup, including capitalization protection, noisy-field removal, and IEEE venue abbreviation
+- Authorized scholarly lookup workflow for DOI, publisher records, access status, and formal publication versions
+- BibTeX cleanup, including capitalization protection, noisy-field removal, DOI preservation, arXiv/preprint handling, and IEEE venue abbreviation
 - Static audit script for common LaTeX, citation, figure, encoding, unit, and formatting risks
 
 ## Install
@@ -69,6 +70,10 @@ Use $ieee-latex-writer to audit my IEEE paper for double-blind review.
 Use $ieee-latex-writer to clean my BibTeX file and check IEEE formatting risks.
 ```
 
+```text
+Use $ieee-latex-writer to find the formal publication version, DOI, access status, and IEEEtran BibTeX for these papers.
+```
+
 ## Repository Contents
 
 - `SKILL.md`: Core skill instructions and trigger description
@@ -76,6 +81,7 @@ Use $ieee-latex-writer to clean my BibTeX file and check IEEE formatting risks.
 - `references/`: IEEE writing, LaTeX workflow, and reviewer-response references
 - `assets/ieee-official-templates/`: Bundled official IEEEtran template files and instructions
 - `scripts/audit_ieee_latex.py`: Static audit script for IEEE LaTeX projects
+- `scripts/clean_ieee_bib.py`: Conservative IEEEtran BibTeX cleanup script
 - `.codex-plugin/plugin.json`: Optional package metadata for plugin-style skill distribution
 
 ## Static Audit
@@ -89,6 +95,16 @@ python scripts/audit_ieee_latex.py path/to/main.tex
 The audit checks common risks such as IEEEtran class usage, risky packages, unresolved citations, missing figure files, caption/label ordering, double-blind identity leaks, Chinese/full-width punctuation, percent and unit formatting, prose inside math environments, and dirty BibTeX fields.
 
 This script does not replace the official IEEE Template Selector, IEEE LaTeX Analyzer, Reference Preparation Assistant, PDF Checker, or target venue instructions.
+
+## BibTeX Cleanup
+
+Run:
+
+```bash
+python scripts/clean_ieee_bib.py path/to/references.bib
+```
+
+The script writes `*_ieee_clean.bib` beside the input, preserves citation keys, removes common exported noise fields, and protects common robotics/control/learning acronyms in titles. Review DOI completeness, venue correctness, duplicates, and arXiv-only entries manually before submission.
 
 ## Star History
 
