@@ -262,6 +262,15 @@ Use this workflow when finding, verifying, replacing, or adding scholarly citati
 - Download PDFs only when institutional terms allow access, the PDF is open access, the PDF is legally public on an author/institution page, or the user already provided the file.
 - Avoid bulk crawling. Default to 1-20 papers. If a request exceeds 20 papers, ask for confirmation and propose batching.
 
+### Publisher Block Fallback
+
+- Treat HTTP `418`, `403`, or `429` from IEEE Xplore or another publisher as an automation/access block, not evidence that the paper, DOI, or citation is invalid.
+- Do not repeatedly retry the blocked publisher URL, rotate user agents, reuse browser cookies, change proxies, or attempt any other bypass. Record the status code and continue through authorized fallback sources.
+- Resolve bibliographic metadata through the DOI record and reputable scholarly indexes such as Crossref, OpenAlex, DBLP, PubMed, or Semantic Scholar as appropriate to the field. Use the publisher record as canonical when it is normally accessible, but do not make the whole task fail when its automated endpoint is blocked.
+- Look for legal full text in this order: user-provided PDF; open-access publisher PDF; institutional repository or author-posted accepted manuscript; arXiv or another recognized preprint server. Clearly label accepted manuscripts and preprints as non-version-of-record copies.
+- If the user has legitimate browser or institutional access, ask them to open or download the paper manually and provide the PDF. Never request exported cookies or authentication data.
+- Distinguish evidence levels in the result: `full text read`, `abstract/metadata only`, `publisher page blocked`, or `needs user-provided PDF`. Never summarize methods, equations, experiments, or conclusions as if the full paper was read when only metadata or an abstract was available.
+
 ### Formal-Version Lookup
 
 1. Normalize inputs: accept paper titles, DOI, arXiv links, publisher URLs, BibTeX keys, PDFs, or a research topic.
@@ -270,7 +279,8 @@ Use this workflow when finding, verifying, replacing, or adding scholarly citati
 4. Compare preprint and formal records by title, authors, year, DOI, venue, and abstract. If arXiv and formal versions both exist, return the formal version and label arXiv as a preprint.
 5. Record `title`, `authors`, `year`, `venue`, `volume/issue/pages/article number`, `DOI`, `publisher page URL`, `open/authorized PDF URL`, `publication type`, `peer-reviewed?`, and `arXiv-only?`.
 6. Mark access status as one of: `authorized`, `open access`, `author public copy`, `metadata only`, `needs user login`, `blocked`, or `user-provided`.
-7. If uncertain, state the uncertainty and the exact evidence that would resolve it, such as publisher page access, DOI confirmation, or a user-provided PDF.
+7. If a publisher returns `418`, `403`, or `429`, preserve the DOI/publisher URL, mark the publisher page as `blocked`, use authorized metadata fallbacks, and continue instead of reporting a generic retrieval failure.
+8. If uncertain, state the uncertainty and the exact evidence that would resolve it, such as publisher page access, DOI confirmation, or a user-provided PDF.
 
 For formal-version lookup, output:
 
