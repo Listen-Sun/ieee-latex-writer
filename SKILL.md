@@ -264,7 +264,7 @@ Use this workflow when finding, verifying, replacing, or adding scholarly citati
 
 ### Publisher Block Fallback
 
-- Treat HTTP `418`, `403`, or `429` from IEEE Xplore or another publisher as an automation/access block, not evidence that the paper, DOI, or citation is invalid.
+- Treat HTTP `418`, `403`, or `429`, and HTTP `202` responses with an empty body or challenge/interstitial content, from IEEE Xplore or another publisher as an automation/access block, not evidence that the paper, DOI, or citation is invalid.
 - Do not repeatedly retry the blocked publisher URL, rotate user agents, reuse browser cookies, change proxies, or attempt any other bypass. Record the status code and continue through authorized fallback sources.
 - Resolve bibliographic metadata through the DOI record and reputable scholarly indexes such as Crossref, OpenAlex, DBLP, PubMed, or Semantic Scholar as appropriate to the field. Use the publisher record as canonical when it is normally accessible, but do not make the whole task fail when its automated endpoint is blocked.
 - Look for legal full text in this order: user-provided PDF; open-access publisher PDF; institutional repository or author-posted accepted manuscript; arXiv or another recognized preprint server. Clearly label accepted manuscripts and preprints as non-version-of-record copies.
@@ -279,7 +279,7 @@ Use this workflow when finding, verifying, replacing, or adding scholarly citati
 4. Compare preprint and formal records by title, authors, year, DOI, venue, and abstract. If arXiv and formal versions both exist, return the formal version and label arXiv as a preprint.
 5. Record `title`, `authors`, `year`, `venue`, `volume/issue/pages/article number`, `DOI`, `publisher page URL`, `open/authorized PDF URL`, `publication type`, `peer-reviewed?`, and `arXiv-only?`.
 6. Mark access status as one of: `authorized`, `open access`, `author public copy`, `metadata only`, `needs user login`, `blocked`, or `user-provided`.
-7. If a publisher returns `418`, `403`, or `429`, preserve the DOI/publisher URL, mark the publisher page as `blocked`, use authorized metadata fallbacks, and continue instead of reporting a generic retrieval failure.
+7. If a publisher returns `418`, `403`, `429`, or a non-content `202` response, preserve the DOI/publisher URL, mark the publisher page as `blocked`, use authorized metadata fallbacks, and continue instead of reporting a generic retrieval failure.
 8. If uncertain, state the uncertainty and the exact evidence that would resolve it, such as publisher page access, DOI confirmation, or a user-provided PDF.
 
 For formal-version lookup, output:

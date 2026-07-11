@@ -73,7 +73,7 @@ Use $ieee-latex-writer to clean my BibTeX file and check IEEE formatting risks.
 Use $ieee-latex-writer to find the formal publication version, DOI, access status, and IEEEtran BibTeX for these papers.
 ```
 
-如果 IEEE Xplore 返回 `418`、`403` 或 `429`，Skill 会将其识别为出版社反自动化/访问限制，并转向 DOI、Crossref、OpenAlex、DBLP、arXiv 或作者公开稿等合法来源。仅获取到摘要或元数据时，会明确标注，绝不会假装已经读取全文。
+如果 IEEE Xplore 返回 `418`、`403`、`429`，或返回没有论文内容的 `202` 空响应/挑战页，Skill 会将其识别为出版社反自动化/访问限制，并转向 DOI、Crossref、OpenAlex、DBLP、arXiv 或作者公开稿等合法来源。仅获取到摘要或元数据时，会明确标注，绝不会假装已经读取全文。
 
 ## 目录
 
