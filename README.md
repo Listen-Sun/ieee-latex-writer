@@ -75,6 +75,29 @@ Use $ieee-latex-writer to find the formal publication version, DOI, access statu
 
 如果 IEEE Xplore 返回 `418`、`403`、`429`，或返回没有论文内容的 `202` 空响应/挑战页，Skill 会将其识别为出版社反自动化/访问限制，并转向 DOI、Crossref、OpenAlex、DBLP、arXiv 或作者公开稿等合法来源。仅获取到摘要或元数据时，会明确标注，绝不会假装已经读取全文。
 
+推荐直接运行：
+
+```bash
+python scripts/lookup_ieee_paper.py https://ieeexplore.ieee.org/document/11279722/
+```
+
+如果校园网权限只在正常浏览器中生效，可以让脚本打开浏览器页面：
+
+```bash
+python scripts/lookup_ieee_paper.py https://ieeexplore.ieee.org/document/11279722/ --open-browser
+```
+
+在浏览器中合法下载 PDF 后，再让 Codex 读取本地 PDF。脚本不会导出或复用浏览器 Cookie。
+
+如需通过 IEEE article number 精确查询，请从 IEEE Developer Portal 申请 Metadata API key，仅在本机设置环境变量后重试：
+
+```powershell
+$env:IEEE_XPLORE_API_KEY="your-local-api-key"
+python scripts/lookup_ieee_paper.py 11279722
+```
+
+不要把 API key 写入仓库、论文文件或聊天提示。
+
 ## 目录
 
 - `SKILL.md`: 技能核心说明和触发描述
@@ -83,6 +106,7 @@ Use $ieee-latex-writer to find the formal publication version, DOI, access statu
 - `assets/ieee-official-templates/`: 官方 IEEEtran 模板和说明文件
 - `scripts/audit_ieee_latex.py`: IEEE LaTeX 项目静态审查脚本
 - `scripts/clean_ieee_bib.py`: 保守的 IEEEtran BibTeX 清理脚本
+- `scripts/lookup_ieee_paper.py`: 支持官方 IEEE API 与多索引降级的论文检索脚本
 - `.codex-plugin/plugin.json`: 可选的插件式分发元数据
 
 ## 静态审查

@@ -30,6 +30,7 @@ Open-community skill for writing, revising, anonymizing, and auditing IEEE-style
 - Use `assets/ieee-official-templates/` as the bundled IEEEtran starter package when a local template is needed. Prefer the target venue's current template package or IEEE Template Selector for real submissions, then fall back to the bundled official journal sample.
 - Run `scripts/audit_ieee_latex.py <project-or-main.tex>` for lightweight static checks. Treat it as a preflight aid, not a replacement for compilation or official IEEE validation tools.
 - Run `scripts/clean_ieee_bib.py <references.bib>` when the user wants a deterministic first pass over exported BibTeX before manual DOI, venue, and formal-version verification.
+- Run `scripts/lookup_ieee_paper.py <IEEE-URL|article-number|DOI|title>` for resilient paper lookup. Use the optional `IEEE_XPLORE_API_KEY` environment variable for exact official article-number metadata; never request or print the key in chat.
 
 ## Paper Strategy Layer
 
@@ -269,7 +270,9 @@ Use this workflow when finding, verifying, replacing, or adding scholarly citati
 - Resolve bibliographic metadata through the DOI record and reputable scholarly indexes such as Crossref, OpenAlex, DBLP, PubMed, or Semantic Scholar as appropriate to the field. Use the publisher record as canonical when it is normally accessible, but do not make the whole task fail when its automated endpoint is blocked.
 - Look for legal full text in this order: user-provided PDF; open-access publisher PDF; institutional repository or author-posted accepted manuscript; arXiv or another recognized preprint server. Clearly label accepted manuscripts and preprints as non-version-of-record copies.
 - If the user has legitimate browser or institutional access, ask them to open or download the paper manually and provide the PDF. Never request exported cookies or authentication data.
+- When campus-network or institutional-IP access works in the user's normal browser, run `scripts/lookup_ieee_paper.py <IEEE-URL> --open-browser` to hand the publisher page to that browser. Continue from the downloaded local PDF; do not attempt to import the browser session into command-line tools.
 - Distinguish evidence levels in the result: `full text read`, `abstract/metadata only`, `publisher page blocked`, or `needs user-provided PDF`. Never summarize methods, equations, experiments, or conclusions as if the full paper was read when only metadata or an abstract was available.
+- Prefer `scripts/lookup_ieee_paper.py` for this workflow. A publisher block is a successful structured lookup state, not a script failure; return candidates and next actions with a normal exit code.
 
 ### Formal-Version Lookup
 

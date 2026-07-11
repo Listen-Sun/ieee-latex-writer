@@ -76,6 +76,29 @@ Use $ieee-latex-writer to find the formal publication version, DOI, access statu
 
 If IEEE Xplore returns `418`, `403`, `429`, or a `202` response with no paper content or a challenge page, the skill treats it as a publisher automation/access block and falls back to legal sources such as DOI records, Crossref, OpenAlex, DBLP, arXiv, or author-posted manuscripts. It explicitly distinguishes metadata/abstract access from full-text reading.
 
+Run:
+
+```bash
+python scripts/lookup_ieee_paper.py https://ieeexplore.ieee.org/document/11279722/
+```
+
+If institutional access works only in the normal browser, hand the page to that browser:
+
+```bash
+python scripts/lookup_ieee_paper.py https://ieeexplore.ieee.org/document/11279722/ --open-browser
+```
+
+Download the PDF legally in the browser, then let Codex read the local PDF. The script never exports or reuses browser cookies.
+
+For exact IEEE article-number lookup, obtain a Metadata API key from the IEEE Developer Portal and set it only in the local environment:
+
+```powershell
+$env:IEEE_XPLORE_API_KEY="your-local-api-key"
+python scripts/lookup_ieee_paper.py 11279722
+```
+
+Never commit or paste the API key into paper files or chat prompts.
+
 ## Repository Contents
 
 - `SKILL.md`: Core skill instructions and trigger description
@@ -84,6 +107,7 @@ If IEEE Xplore returns `418`, `403`, `429`, or a `202` response with no paper co
 - `assets/ieee-official-templates/`: Bundled official IEEEtran template files and instructions
 - `scripts/audit_ieee_latex.py`: Static audit script for IEEE LaTeX projects
 - `scripts/clean_ieee_bib.py`: Conservative IEEEtran BibTeX cleanup script
+- `scripts/lookup_ieee_paper.py`: Resilient paper lookup through the official IEEE API and scholarly-index fallbacks
 - `.codex-plugin/plugin.json`: Optional package metadata for plugin-style skill distribution
 
 ## Static Audit
